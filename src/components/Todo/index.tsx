@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FaChevronDown, FaPlus, FaChevronUp } from 'react-icons/fa';
 import {
   Container,
@@ -7,7 +7,7 @@ import {
   ToggleShow,
   ToggleShowText,
   CreateButton,
-  Content
+  Content,
 } from './styles/Todo';
 import TodoList from './TodoList';
 import { TodoContext } from '../../context/todos';
@@ -20,6 +20,20 @@ const Todo = () => {
   const activeTodos = state.todos.filter(todo => !todo.completed);
   const completedTodos = state.todos.filter(todo => todo.completed);
 
+  const handler = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      setShowModalCreate(true);
+    } else if (e.key === 'Escape') {
+      setShowModalCreate(false);
+    }
+  };
+
+  useEffect(() => {
+    console.log('here');
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
   const onCreate = () => {
     setShowModalCreate(true);
   };
@@ -30,11 +44,7 @@ const Todo = () => {
         <HeadTitle>FANCY TODO V2</HeadTitle>
         <ToggleShow onClick={() => setShowMore(!showMore)}>
           <ToggleShowText>{showMore ? 'show less' : 'show more'}</ToggleShowText>
-          {showMore ? (
-            <FaChevronUp size={12} />
-            ) : (
-            <FaChevronDown size={12} />
-          )}
+          {showMore ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
         </ToggleShow>
       </Head>
 
