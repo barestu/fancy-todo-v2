@@ -40,6 +40,8 @@ export const ToggleShowText = styled.p`
 
 export const Content = styled.div<{ showMore: boolean }>`
   display: ${({ showMore }) => showMore ? 'block' : 'none' };
+  max-height: 70vh;
+  overflow: auto;
 `;
 
 export const CreateButton = styled.button`
