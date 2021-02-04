@@ -46,21 +46,21 @@ export const IconButton = styled.button<{ isCompleted: boolean }>`
   box-shadow: 0 0 4px 0 rgba(0,0,0,0.1);
   width: 28px;
   height: 28px;
-  cursor: pointer;
+  cursor: ${({ isCompleted }) => !isCompleted && 'pointer' };
 
   & > svg {
     color: ${({ theme, isCompleted }) => isCompleted ? theme.colors.secondary : '#E1E1E1' };
   }
 `;
 
-export const Name = styled.p`
+export const Name = styled.p<{ isCompleted: boolean }>`
   flex: 2;
   padding: 0 30px;
-  color: #333333;
+  color: ${({ isCompleted }) => isCompleted ? '#E1E1E1' : '#333333' };
   font-weight: 400;
 `;
 
-export const DueDate = styled.p<{ bold?: boolean }>`
+export const DueDate = styled.p<{ bold?: boolean | null }>`
   flex: 1;
   padding: 0 30px;
   color: #7D8FA8;

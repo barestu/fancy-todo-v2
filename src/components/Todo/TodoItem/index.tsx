@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { FaCheck, FaChevronRight } from 'react-icons/fa';
 import { TodoSchema } from '../../../types/schemas';
+import { TodoContext } from '../../../context/todos';
+import { theme } from '../../../themes/theme';
 import {
   Container,
   DueDate,
@@ -10,27 +12,30 @@ import {
   Name,
   ShowMore,
 } from './styles/TodoItem';
-import { theme } from '../../../themes/theme';
+import { ActionType } from '../../../context/todos/types';
 
 interface TodoItemProps {
   todo: TodoSchema;
 }
 
 const TodoItem = ({ todo }: TodoItemProps) => {
+  const { dispatch } = useContext(TodoContext);
+
   const getIndicatorColor = () => {
-    if (todo.completed) {
-      return '#E1E1E1';
-    } else if (isToday(todo.due_date)) {
-      return theme.colors.secondary;
-    } else if (isTomorrow(todo.due_date)) {
-      return '#7A8CA6';
-    } else {
-      return '#E1E1E1';
+    if (todo.due_date) {
+      if (isToday(todo.due_date)) {
+        return theme.colors.secondary;
+      } else if (isTomorrow(todo.due_date)) {
+        return '#7A8CA6';
+      }
     }
+    return '#E1E1E1';
   }
 
   const getDueDate = () => {
-    if (isToday(todo.due_date)) {
+    if (!todo.due_date) {
+      return '-';
+    } else if (isToday(todo.due_date)) {
       return 'Today';
     } else if (isTomorrow(todo.due_date)) {
       return 'Tomorrow';
@@ -39,17 +44,27 @@ const TodoItem = ({ todo }: TodoItemProps) => {
     }
   }
 
+  const setCompleted = () => {
+    const payload: TodoSchema = {
+      ...todo,
+      completed: true,
+      completed_date: new Date(),
+    };
+
+    dispatch({ type: ActionType.UPDATE, payload });
+  };
+
   return (
     <Container>
       <IconContainer indicatorColor={getIndicatorColor()}>
-        <IconButton isCompleted={todo.completed}>
+        <IconButton isCompleted={todo.completed} onClick={setCompleted}>
           <FaCheck />
         </IconButton>
       </IconContainer>
-      <Name>{todo.name}</Name>
+      <Name isCompleted={todo.completed}>{todo.name}</Name>
       {!todo.completed && (
         <>
-          <DueDate bold={isToday(todo.due_date)}>
+          <DueDate bold={todo.due_date && isToday(todo.due_date)}>
             {getDueDate()}
           </DueDate>
           <ShowMore>

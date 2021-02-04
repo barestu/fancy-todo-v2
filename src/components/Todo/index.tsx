@@ -1,50 +1,69 @@
-import React from 'react';
-import { FaChevronDown, FaPlus } from 'react-icons/fa';
+import React, { useContext, useState } from 'react';
+import { FaChevronDown, FaPlus, FaChevronUp } from 'react-icons/fa';
 import {
   Container,
   Head,
   HeadTitle,
   ToggleShow,
   ToggleShowText,
-  CreateButton
+  CreateButton,
+  Content
 } from './styles/Todo';
 import TodoList from './TodoList';
-import { TodoSchema } from '../../types/schemas';
+import { TodoContext } from '../../context/todos';
+import ModalCreate from '../ModalCreate/ModalCreate';
 
-interface TodoProps {
-  todos: TodoSchema[];
-}
+const Todo = () => {
+  const [showMore, setShowMore] = useState(true);
+  const [showModalCreate, setShowModalCreate] = useState(false);
+  const { state } = useContext(TodoContext);
+  const activeTodos = state.todos.filter(todo => !todo.completed);
+  const completedTodos = state.todos.filter(todo => todo.completed);
 
-const Todo = ({ todos }: TodoProps) => {
-  const activeTodos = todos.filter(todo => !todo.completed);
-  const completedTodos = todos.filter(todo => todo.completed);
+  const onCreate = () => {
+    setShowModalCreate(true);
+  };
 
   return (
     <Container>
       <Head>
-        <HeadTitle>TITLE OF THE LIST</HeadTitle>
-        <ToggleShow>
-          <ToggleShowText>show less</ToggleShowText>
-          <FaChevronDown size={12} />
+        <HeadTitle>FANCY TODO V2</HeadTitle>
+        <ToggleShow onClick={() => setShowMore(!showMore)}>
+          <ToggleShowText>{showMore ? 'show less' : 'show more'}</ToggleShowText>
+          {showMore ? (
+            <FaChevronUp size={12} />
+            ) : (
+            <FaChevronDown size={12} />
+          )}
         </ToggleShow>
       </Head>
 
-      <TodoList
-        title="Tasks"
-        notFoundMsg="Currently you don't have any tasks."
-        todos={activeTodos}
-        showDueDate
-      />
+      <Content showMore={showMore}>
+        <TodoList
+          title="Tasks"
+          notFoundMsg="Currently you don't have any tasks."
+          todos={activeTodos}
+          showDueDate
+        />
 
-      <TodoList
-        title="Done"
-        notFoundMsg="Complete your tasks and it will appear here."
-        todos={completedTodos}
-      />
+        {!!(activeTodos.length || completedTodos.length) && (
+          <TodoList
+            title="Done"
+            notFoundMsg="Complete your tasks and it will appear here."
+            todos={completedTodos}
+          />
+        )}
+      </Content>
 
-      <CreateButton>
+      <CreateButton onClick={onCreate}>
         <FaPlus color="#ffffff" />
       </CreateButton>
+
+      <ModalCreate
+        show={showModalCreate}
+        onClose={() => setShowModalCreate(false)}
+        onCreate={() => setShowMore(true)}
+      />
     </Container>
   );
 };

@@ -4,5 +4,5 @@ export interface TodoSchema {
   completed: boolean;
   created_date: Date;
   completed_date: Date | null;
-  due_date: Date;
+  due_date: Date | null;
 }

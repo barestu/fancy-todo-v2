@@ -38,6 +38,10 @@ export const ToggleShowText = styled.p`
   margin-right: 6px;
 `;
 
+export const Content = styled.div<{ showMore: boolean }>`
+  display: ${({ showMore }) => showMore ? 'block' : 'none' };
+`;
+
 export const CreateButton = styled.button`
   position: absolute;
   bottom: 0;
